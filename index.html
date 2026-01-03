@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ScriptShare Community</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --bg:#0a0d12;
+  --panel:#0f1420;
+  --card:#12192a;
+  --glass:rgba(255,255,255,.04);
+  --border:rgba(255,255,255,.08);
+  --text:#e8ecf3;
+  --muted:#9aa4b2;
+  --accent:#7c7cff;
+  --accent2:#4fd1c5;
+  --danger:#ff6b6b;
+  --radius:16px;
+  --shadow:0 25px 60px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
+  background:
+    radial-gradient(700px 400px at 10% 10%, rgba(124,124,255,.15), transparent),
+    radial-gradient(600px 300px at 90% 90%, rgba(79,209,197,.1), transparent),
+    var(--bg);
+  color:var(--text);
+}
+
+.container{max-width:1200px;margin:auto;padding:24px}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:24px;
+}
+
+.brand{display:flex;gap:14px;align-items:center}
+
+.logo{
+  width:52px;height:52px;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--accent),#5ca4ff);
+  display:grid;place-items:center;
+  font-weight:900;font-size:20px;
+}
+
+nav a{
+  color:var(--muted);
+  text-decoration:none;
+  padding:10px 14px;
+  border-radius:10px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+nav a.active, nav a:hover{
+  color:white;
+  background:var(--glass);
+}
+
+.pages{display:none}
+.pages.active{display:block}
+
+.main{
+  display:grid;
+  grid-template-columns:1fr 360px;
+  gap:20px;
+}
+
+@media(max-width:900px){
+  .main{grid-template-columns:1fr}
+}
+
+.card{
+  background:linear-gradient(180deg,var(--glass),transparent);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px;
+  box-shadow:var(--shadow);
+}
+
+input,textarea{
+  width:100%;
+  padding:12px;
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:12px;
+  color:inherit;
+}
+
+.script-item{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:14px;
+  transition:.2s;
+}
+
+.script-item:hover{transform:translateY(-4px)}
+
+.script-title{font-weight:900}
+.script-desc{color:var(--muted);font-size:14px;margin:6px 0}
+
+.tag{
+  display:inline-block;
+  padding:6px 10px;
+  background:rgba(124,124,255,.15);
+  border:1px solid rgba(124,124,255,.3);
+  border-radius:999px;
+  font-size:12px;
+  margin-right:6px;
+}
+
+.btn{
+  padding:8px 12px;
+  border-radius:10px;
+  border:none;
+  cursor:pointer;
+  font-weight:800;
+  background:linear-gradient(135deg,var(--accent),#5ca4ff);
+  color:white;
+}
+
+.btn.ghost{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--muted);
+}
+
+.badge{
+  background:linear-gradient(135deg,var(--accent2),#56cddf);
+  color:#001;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:900;
+}
+
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+.modal{
+  background:var(--panel);
+  border-radius:18px;
+  border:1px solid var(--border);
+  max-width:900px;
+  width:90%;
+  padding:20px;
+}
+
+pre{
+  background:#05070d;
+  padding:16px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  overflow:auto;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <div class="brand">
+    <div class="logo">SS</div>
+    <h2>ScriptShare</h2>
+  </div>
+  <nav>
+    <a onclick="showPage('home')" class="active">Home</a>
+    <a onclick="adminGate()">Admin</a>
+    <a onclick="showPage('guidelines')">Guidelines</a>
+  </nav>
+</header>
+
+<section id="home" class="pages active">
+  <div class="main">
+    <div class="card">
+      <input id="search" placeholder="Search scripts or tags..." oninput="renderScripts()">
+      <div id="scriptList"></div>
+    </div>
+    <div class="card">
+      <h3>Community Scripts</h3>
+      <p class="script-desc">Admin-curated scripts for everyone.</p>
+    </div>
+  </div>
+</section>
+
+<section id="submit" class="pages">
+  <div class="card">
+    <h3>Admin Upload</h3>
+    <input id="title" placeholder="Title *">
+    <textarea id="desc" placeholder="Description *"></textarea>
+    <input id="tags" placeholder="Tags (comma separated)">
+    <textarea id="content" rows="8" placeholder="Script content *"></textarea>
+    <br><br>
+    <button class="btn" onclick="addScript()">Publish</button>
+  </div>
+</section>
+
+<section id="guidelines" class="pages">
+  <div class="card">
+    <h3>Guidelines</h3>
+    <ul>
+      <li>Admin uploads only</li>
+      <li>No harmful scripts</li>
+      <li>Educational & clean content</li>
+    </ul>
+  </div>
+</section>
+
+</div>
+
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <h3 id="mTitle"></h3>
+    <p id="mDesc" class="script-desc"></p>
+    <pre><code id="mCode"></code></pre>
+    <br>
+    <button class="btn" onclick="copyText()">Copy</button>
+    <button class="btn ghost" onclick="download()">Download .txt</button>
+    <button class="btn" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script>
+const ADMIN_PASSWORD = "scriptadmin";
+let isAdmin = localStorage.getItem("isAdmin") === "true";
+
+let scripts = JSON.parse(localStorage.getItem("scripts")) || [
+  {
+    title:"Hello World JS",
+    desc:"Basic JavaScript example",
+    tags:["js","beginner"],
+    content:"console.log('Hello World');"
+  }
+];
+
+let currentScript=null;
+
+function adminGate(){
+  if(isAdmin) return showPage('submit');
+  const p = prompt("Admin password:");
+  if(p===ADMIN_PASSWORD){
+    isAdmin=true;
+    localStorage.setItem("isAdmin","true");
+    alert("Admin access granted");
+    showPage('submit');
+  } else alert("Wrong password");
+}
+
+function showPage(id){
+  document.querySelectorAll('.pages').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderScripts(){
+  const q=search.value.toLowerCase();
+  scriptList.innerHTML="";
+  scripts.filter(s=>s.title.toLowerCase().includes(q)||s.tags.join().includes(q))
+    .forEach((s,i)=>{
+      scriptList.innerHTML+=`
+      <div class="script-item">
+        <div>
+          <div class="script-title">${s.title} <span class="badge">Admin</span></div>
+          <div class="script-desc">${s.desc}</div>
+          ${s.tags.map(t=>`<span class="tag">${t}</span>`).join("")}
+        </div>
+        <button class="btn ghost" onclick="view(${i})">View</button>
+      </div>`;
+    });
+}
+
+function addScript(){
+  if(!isAdmin) return;
+  if(!title.value||!desc.value||!content.value) return alert("Fill all fields");
+  scripts.unshift({
+    title:title.value,
+    desc:desc.value,
+    tags:tags.value.split(",").map(t=>t.trim()).filter(Boolean),
+    content:content.value
+  });
+  localStorage.setItem("scripts",JSON.stringify(scripts));
+  showPage('home');
+  renderScripts();
+}
+
+function view(i){
+  currentScript=scripts[i];
+  mTitle.textContent=currentScript.title;
+  mDesc.textContent=currentScript.desc;
+  mCode.textContent=currentScript.content;
+  modal.style.display="flex";
+}
+
+function closeModal(){modal.style.display="none"}
+function copyText(){navigator.clipboard.writeText(currentScript.content)}
+
+function download(){
+  const name=currentScript.title.toLowerCase().replace(/[^a-z0-9]+/g,"-");
+  const blob=new Blob([currentScript.content],{type:"text/plain"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=name+".txt";
+  a.click();
+}
+
+renderScripts();
+</script>
+</body>
+</html>
